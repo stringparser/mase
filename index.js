@@ -20,11 +20,11 @@ var Mase = require('mase');
 ```js
 function Mase(string name, array data)
 ```
-Constructor of in memory dbs
+Constructor of in memory dbs.
 
 _arguments_
 - `name` type string, name of the store
-- `data` type array reprensenting the in memory db
+- `data` type array to insert in memory db
 
 _defaults_
 - `name` to a random string
@@ -45,20 +45,10 @@ function Mase(_name, data){
   var name = util.type(_name).string || util.randomID();
   Object.defineProperty(this, 'name', {value: name});
 
-  mase[name] = [];
   data = data || _name;
+  mase[name] = mase[name] || [];
   if(util.type(data).array){
-    data.forEach(function(item, index){
-      if(!item){ return ; }
-      if(!util.type(item).plainObject){
-        throw new TypeError('new Mase(name, array data) ' +
-          'elements of the array data should be plainObjects\n' +
-          'element `'+index+'` ' + item + 'is not'
-        );
-      }
-      if(!item.id){ item.id = util.randomID(); }
-      this.insert(item);
-    }, this);
+    data.forEach(this.insert, this);
   }
 }
 
@@ -66,24 +56,24 @@ function Mase(_name, data){
 #### insert
 
 ```js
-function insert(object doc)
+function insert(object document)
 ```
-Insert a new document in the db.
+Insert a new document in the memory db.
 
 _arguments_
- - `doc` type object, element to insert
+ - `document` type object, element to insert
 
 _defaults_
- - `doc.id` to random string
+ - `document.id` to random string
 
 _returns_
- - a clone of the inserted `doc`
+ - a clone of the inserted `document`
 
 **/
 Mase.prototype.insert = function(doc){
   if(!util.type(doc).plainObject){
     throw new TypeError(
-      'insert(fields) `fields` should be a plainObject'
+      'insert(document) `document` should be a plainObject'
     );
   }
 
@@ -108,18 +98,18 @@ _arguments_
  - `options` type object, how to do the lookup
 
 _options_ properties
- - `count` type boolean, whether to return a count or not
+ - `acc`
  - `test` type function for testing `fields` against a document
- - `acc` accumulator for the test funciton, see below
+ - `break` wether or not to break the search after match
+ - `count` type boolean, whether to return a count or not
 
-_test function arguments_ `(fields, doc, key, acc)`
+_test function arguments_ `(fields, doc, key, options)`
  - `fields` the object fields given as argument
- - `key` property that `doc` and `fields` have in common
  - `doc` object document found that has property `key`
- - `acc` helper given for testing of each document
+ - `key` property that `doc` and `fields` have in common
+ - `options` the options object passed in to `find`
 
 _defaults_
-- `options.acc` to true
 - `options.test` equality between `fields[key]` and `doc[key]`
 
 _returns_
@@ -129,47 +119,43 @@ _returns_
 **/
 Mase.prototype.find = function(fields, o){
   var store = mase[this.name];
-  var len = store.length; if(!len){ return []; }
-  if(!fields){ return util.clone(store, true); }
-
-  if(!util.type(fields).plainObject){
+  if(!fields || !store.length){
+    return util.clone(store, true);
+  } else if(!util.type(fields).plainObject){
     throw new TypeError('find(fields[, testFn, options]) '
       + '`fields` should be plainObject'
     );
   }
-
   o = util.type(o).plainObject || {test: o};
+
   if(typeof o.test !== 'function'){
-    o.test = util.defaultTestFn;
+    o.test = util.test.$equal;
   }
 
-  var index = -1;
+  if(typeof o.onMatch !== 'function'){
+    o.onMatch = (o.count && util.match$count) || util.match$equal;
+  }
+
   var spec = Object.keys(fields);
-  o.count = (o.count === void 0 && -1) || 0;
-  if(o.count > -1){ o.found = []; }
+  var index = -1, len = store.length;
+  var result = o.count ? 0 : [];
 
   (function whilst(){
-    var acc = true;
     var doc = store[++index];
-
     var match = spec.filter(function(key){
       if(doc[key] === void 0){ return false; }
-      return o.test(fields, doc, key, acc);
-    }).length && true;
+      return (o.acc = o.test(fields, doc, key, o));
+    }).length;
 
     if(match){
-      if(o.found){ o.found.push(doc); }
-      else { ++o.count; }
+      o.onMatch(result, doc, o);
+      if(o.break){ return ; }
     }
-
     if(index < len){ whilst(); }
   })();
 
-  if(o.found){
-    return o.ref ? o.found : util.clone(o.found, true);
-  } else {
-    return o.count;
-  }
+  if(o.ref){ return result; }
+  return util.clone(result, true);
 };
 
 /**
@@ -180,7 +166,7 @@ function update(object fields, object update[, object options|function updater])
 ```
 Update documents in the memory db. First they are found with
  `find` and then updated. This can be use as an update,
-upsert and transform of documents.
+upsert and transform of documents dependeding on how is used.
 
 _arguments_
  - `fields` type object, document fields for lookup
@@ -216,8 +202,7 @@ Mase.prototype.update = function(fields, update, o){
     o.updater = util.merge;
   }
 
-  o.count = void 0;
-  o.ref = o.ref === void 0;
+  o.ref = true; o.count = false;
   var found = this.find(fields, o).map(function(doc){
     o.updater(doc, update);
     return doc;
