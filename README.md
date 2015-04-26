@@ -2,6 +2,8 @@
 
 ## mase [![build][b-build]][x-travis][![NPM version][b-version]][p-mase] [![Gitter][b-gitter]][x-gitter]
 
+[![Join the chat at https://gitter.im/stringparser/mase](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stringparser/mase?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [install](#install) -
 [examples](#examples) -
 [why](#why) -
