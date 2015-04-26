@@ -216,7 +216,7 @@ Mase.prototype.update = function(fields, update, o){
 #### remove
 
 ```js
-function update(string id)
+function remove(string id)
 ```
 Remove only one document at a time.
 

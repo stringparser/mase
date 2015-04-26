@@ -1,154 +1,146 @@
-## gulp-runtime [![build][b-build]][x-travis][![NPM version][b-version]][p-gulp-runtime] [![Gitter][b-gitter]][x-gitter]
+(WIP)
 
-> an alternate interface to [vinyl-fs][p-vinylFs]
+## mase [![build][b-build]][x-travis][![NPM version][b-version]][p-mase] [![Gitter][b-gitter]][x-gitter]
 
 [install](#install) -
 [examples](#examples) -
 [why](#why) -
 [license](#license)
 
+An in memory db for when things are simple
+
 ## documentation
 
-For more information go to the [documentation folder](./docs).
+## module.exports
 
-## sample
+The module exports a constructor
 
-repl, path-to-regex mapping and async composition
-
-````js
-var gulp = require('gulp-runtime').create({repl: true});
-var util = require('gulp-runtime/util');
-var browserSync = require('browser-sync');
-
-var sass = require('gulp-sass');
-var concat = require('gulp-concat');
-var webpack = require('gulp-webpack');
-var sourcemaps = require('gulp-sourcemaps');
-var autoprefixer = require('gulp-autoprefixer');
-
-var opt = require('./config'); // config opts for plugins
-
-// general purpose watch|unwatch
-var watcher = {};
-gulp.task('(watch|unwatch) :glob :tasks((?:\\w+,?)+)', function(next){
-  var watch = next.params[0] === 'watch';
-  var glob = next.params.glob;
-  var tasks = next.params.tasks.split(',');
-
-  if(watch && watcher[glob]){
-    util.log('Already watching %s', util.log(glob));
-  } else if(watch){
-    util.log('Watching %s, tasks after watch \'%s\'',
-      util.color.yellow(glob),
-      util.color.cyan(tasks)
-    );
-    watcher[glob] = gulp.watch(glob, tasks);
-  } else if(watcher[glob]){
-    watcher[glob].end();
-  } else {
-    util.log('No watcher set for `%s`', glob);
-    util.log('-'+ Object.keys(watcher).join('\n-'));
-  }
-  next();
-});
-
-// all js (even if has some jsx)
-// webpack takes care of sourcemaps and jsx transpiling here
-gulp.task('js', function(){
-  return gulp.src('app/**/*.js')
-    .pipe(webpack(opt.webpack))
-    .pipe(gulp.dest('build'))
-    .once('end', browserSync.reload);
-});
-
-// styles with sourcemaps
-gulp.task('sass', function(){
-  return gulp.src('app/styles/*.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass()).pipe(autoprefixer()).pipe(concat('bundle.css'))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('build'))
-    .once('end', browserSync.reload);
-});
-
-// proxy server using browserSync
-function serve(next){
-  var server = require('./server');
-  var port = server.http._connectionKey.split(':').pop();
-  // proxy server with browserSync
-  browserSync({open: false, proxy: 'localhost:'+port});
-  // reload browser when html files change
-  gulp.watch('build/*.html', browserSync.reload);
-  // reload require.cache for these and reload the browser
-  gulp.watch('server/**/*.js', {reload: true}, browserSync.reload);
-  next();
-}
-
-// run
-var watching = gulp.stack('watch app/styles/*.scss sass watch app/js/*.js js');
-gulp.stack(serve, watching, {wait: true})(/* pass arguments here */);
-````
-> complete code can be found [here][x-app-template]
-
-to run it, do just like any other node program
-
-```sh
-$ node gulpfile.js
-[23:31:54] Using ~/code/app-template/gulpfile.js
-[23:31:54] Started 'serve watch app/styles/*.scss sass watch app/js/*.js js' in series
-[23:31:56] Finished 'serve' after 2.19 s
-[23:31:56] Watching app/styles/*.scss, tasks after watch 'sass'
-[23:31:56] Finished 'watch app/styles/*.scss sass' after 27 ms
-[23:31:56] Watching app/js/*.js, tasks after watch 'js'
-[23:31:56] Finished 'watch app/js/*.js js' after 1.44 ms
-[23:31:56] Finished 'serve watch app/styles/*.scss sass watch app/js/*.js js' after 2.22 s
-[BS] Proxying: http://localhost:8000
-[BS] Access URLs:
- ------------------------------------
-       Local: http://localhost:3000
-    External: http://192.168.1.3:3000
- ------------------------------------
-          UI: http://localhost:3001
- UI External: http://192.168.1.3:3001
- ------------------------------------
->
+```js
+var Mase = require('mase');
 ```
 
-Press
+### Mase
 
-1. <kbd>Enter</kbd> to see the prompt
-1. write the tasks you want to run
-1. or <kbd>Tab</kbd> to see completion
-
-for example, the [gulp cli][x-gulp-cli] is available for every instance. To see all commands available write an hypen and press tab
-
-```sh
-> - (Press Tab)
---silent        --cwd           --no-color
---color         --tasks-simple  --tasks
--T              --require       --gulpfile
+```js
+function Mase(string name, array data)
 ```
+Constructor of in memory dbs.
 
-## examples
+_arguments_
+- `name` type string, name of the store
+- `data` type array to insert in memory db
 
-For now you can look at the code at the [app-template][x-app-template] repo. Do not hesitate to [create a new issue][x-new-issue] with any comments or directly go to [gitter][x-gitter] and ask there directly. I'll be giving more code examples on the comming weeks.
+_defaults_
+- `name` to a random string
+- `data` to empty array
 
-## why
+_returns_
+- new Mase instance
 
-This started as repl for gulp with a simple interface (completion and cli commands). But it was somewhat limited by how functions were composed at runtime and how you could run a functions previously set. As the project grew I wanted to be able to have more control over task definition and execution. To make this happen:
+_instance properties_
+- `name` the name given or generated for this instance
 
- - [parth][p-parth] path-to-regex madness
- - [tornado][p-tornado] composing asynchronous functions
- - [tornado-repl][p-tornado-repl] a repl for tornado
+#### insert
 
-So now the project puts together this things learnt for [vinyl-fs][p-vinylFs] giving an alternate interface for it.
+```js
+function insert(object document)
+```
+Insert a new document in the memory db.
+
+_arguments_
+ - `document` type object, element to insert
+
+_defaults_
+ - `document.id` to random string
+
+_returns_
+ - a clone of the inserted `document`
+
+
+#### find
+
+```js
+function find(object fields[, object options|function tester])
+```
+Find documents in the memory db. Only documents that
+have at least one of the properties of `fields` will be tested.
+
+_arguments_
+ - `fields` type object, document fields for lookup
+ - `tester` type function to test a field against a document
+ - `options` type object, how to do the lookup
+
+_options_ properties
+ - `acc`
+ - `test` type function for testing `fields` against a document
+ - `break` wether or not to break the search after match
+ - `count` type boolean, whether to return a count or not
+
+_test function arguments_ `(fields, doc, key, options)`
+ - `fields` the object fields given as argument
+ - `doc` object document found that has property `key`
+ - `key` property that `doc` and `fields` have in common
+ - `options` the options object passed in to `find`
+
+_defaults_
+- `options.test` equality between `fields[key]` and `doc[key]`
+
+_returns_
+ - if `count` is truthy, an integer count of all elements found
+ - if `count` is falsy, an array clone of all the elements found
+
+
+#### update
+
+```js
+function update(object fields, object update[, object options|function updater])
+```
+Update documents in the memory db. First they are found with
+ `find` and then updated. This can be use as an update,
+upsert and transform of documents dependeding on how is used.
+
+_arguments_
+ - `fields` type object, document fields for lookup
+ - `update` type object with the fields to update
+ - `updater` type function to update fields with
+ - `options` type object, how to do the update
+
+_options_ properties are the same as `find` plus
+ - `upsert` type booblean, wether to insert `update` when
+ there was no document found with `fields`
+ - `updater` type function to make the update
+
+
+_updater function arguments_ `(doc, update)`
+ - `update` same object given as argument
+ - `doc` document found which `fields` properties
+
+_defaults_
+- `options.updater` to merge `doc` with `update`
+
+_returns this_
+
+
+#### remove
+
+```js
+function remove(string id)
+```
+Remove only one document at a time.
+
+_arguments_
+ - `id` type string, id of the document to delete
+
+_returns_
+ - `true` if there was a document removed
+ - `false` if there was no document removed
 
 ## install
 
 With [npm][x-npm]
 
 ```sh
-npm install gulp-runtime
+npm install mase
 ```
 
 ## license
@@ -163,26 +155,14 @@ npm install gulp-runtime
 -->
 
 [x-npm]: https://www.npmjs.org
-[t-stack]: https://github.com/stringparser/tornado/blob/master/docs/stack.md
-[p-parth]: https://github.com/stringparser/parth
-[p-tornado]: https://github.com/stringparser/tornado
-[m-readline]: https://nodejs.org/api/readline.html
-[x-gulp-cli]: https://github.com/gulpjs/gulp/blob/master/docs/CLI.md
-[p-gulp-runtime]: https://npmjs.com/gulp-runtime
-[p-tornado-repl]: https://github.com/stringparser/tornado-repl
-[x-app-template]: https://github.com/stringparser/app-template
+[p-mase]: https://npmjs.com/mase
 
-[p-vinylFs]: https://github.com/wearefractal/vinyl-fs
-[p-vinylFs.src]: https://github.com/wearefractal/vinyl-fs#srcglobs-opt
-[p-vinylFs.dest]: https://github.com/wearefractal/vinyl-fs#destfolder-opt
-[p-vinylFs.watch]: https://github.com/wearefractal/vinyl-fs#watchglobs-opt-cb
-
-[x-gitter]: https://gitter.im/stringparser/gulp-runtime
-[x-travis]: https://travis-ci.org/stringparser/gulp-runtime/builds
+[x-gitter]: https://gitter.im/stringparser/mase
+[x-travis]: https://travis-ci.org/stringparser/mase/builds
 [x-license]: http://opensource.org/licenses/MIT
-[x-new-issue]: https://github.com/stringparser/gulp-runtime/issues/new
+[x-new-issue]: https://github.com/stringparser/mase/issues/new
 
-[b-build]: http://img.shields.io/travis/stringparser/gulp-runtime/master.svg?style=flat-square
+[b-build]: http://img.shields.io/travis/stringparser/mase/master.svg?style=flat-square
 [b-gitter]: https://badges.gitter.im/Join%20Chat.svg
-[b-version]: http://img.shields.io/npm/v/gulp-runtime.svg?style=flat-square
-[b-license]: http://img.shields.io/npm/l/gulp-runtime.svg?style=flat-square
+[b-version]: http://img.shields.io/npm/v/mase.svg?style=flat-square
+[b-license]: http://img.shields.io/npm/l/mase.svg?style=flat-square

@@ -1,7 +1,7 @@
 {
   "name": "mase",
   "version": "0.1.0",
-  "description": "in memory db for when things are simple",
+  "description": "an in memory db for when things are simple",
   "author": "Javier Carrillo",
   "repository": {
     "type": "git",
