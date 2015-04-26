@@ -1,0 +1,31 @@
+{
+  "name": "mase",
+  "version": "0.1.0",
+  "description": "in memory db for when things are simple",
+  "author": "Javier Carrillo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stringparser/mase"
+  },
+  "keywords": [
+    "db",
+    "in",
+    "memory"
+  ],
+  "dependencies": {
+    "lodash.clone": "^3.0.1",
+    "lodash.isequal": "^3.0.2",
+    "lodash.merge": "^3.2.0",
+    "utils-type": "^0.12.1"
+  },
+  "devDependencies": {
+    "jshint-stylish": "*",
+    "jshint": "*",
+    "should": "*"
+  },
+  "scripts": {
+    "lint": "jshint lib index.js --reporter node_modules/jshint-stylish/stylish.js --exclude node_modules",
+    "test": "npm run-script lint && mocha test/_main.js"
+  },
+  "license": "MIT"
+}
