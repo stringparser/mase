@@ -70,13 +70,8 @@ _returns_
  - a clone of the inserted `document`
 
 **/
-Mase.prototype.insert = function(doc){
-  if(!util.type(doc).plainObject){
-    throw new TypeError(
-      'insert(document) `document` should be a plainObject'
-    );
-  }
-
+Mase.prototype.insert = function(_doc){
+  var doc = util.type(_doc).plainObject || {value: _doc};
   doc.id = util.type(doc.id).string || util.randomID();
   mase[this.name].push(util.clone(doc, true));
 
@@ -133,29 +128,31 @@ Mase.prototype.find = function(fields, o){
   }
 
   if(typeof o.onMatch !== 'function'){
-    o.onMatch = (o.count && util.match$count) || util.match$equal;
+    o.onMatch = (o.count && util.match.$count)
+      || util.match.$equal;
   }
 
   var spec = Object.keys(fields);
-  var index = -1, len = store.length;
-  var result = o.count ? 0 : [];
+  var index = -1, len = store.length-1;
+  o.result = o.count ? 0 : [];
 
   (function whilst(){
+    o.acc = true;
     var doc = store[++index];
     var match = spec.filter(function(key){
       if(doc[key] === void 0){ return false; }
       return (o.acc = o.test(fields, doc, key, o));
-    }).length;
+    }).length || spec.length === 0;
 
     if(match){
-      o.onMatch(result, doc, o);
+      o.onMatch(doc, o);
       if(o.break){ return ; }
     }
     if(index < len){ whilst(); }
   })();
 
-  if(o.ref){ return result; }
-  return util.clone(result, true);
+  if(o.ref){ return o.result; }
+  return util.clone(o.result, true);
 };
 
 /**
@@ -192,7 +189,7 @@ _returns this_
 **/
 Mase.prototype.update = function(fields, update, o){
   if(!util.type(fields).plainObject && !util.type(update).plainObject){
-    throw new TypeError('update(fields, update[, updateFn, upsert]) '
+    throw new TypeError('update(fields, update[, options]) '
       + '`fields` and `update` should be plainObjects'
     );
   }
@@ -209,7 +206,7 @@ Mase.prototype.update = function(fields, update, o){
   });
 
   if(!found.length && o.upsert){
-    this.insert(update);
+    this.insert(util.merge(fields, update));
   }
 
   return this;
