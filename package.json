@@ -1,6 +1,6 @@
 {
   "name": "mase",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "mongo-like in memory db for when things are simple",
   "author": "Javier Carrillo",
   "repository": {
