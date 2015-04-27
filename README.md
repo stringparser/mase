@@ -9,7 +9,7 @@ Mongo-like memory db for when things are simple
 
 ## documentation
 
-The documention is a pleasant [gitbook][gh-pages]
+The documentation is a pleasant [gitbook][gh-pages].
 
 ## usage
 
