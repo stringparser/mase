@@ -1,17 +1,15 @@
-(WIP)
-
 ## mase
 [![build][b-build]][x-travis][![NPM version][b-version]][p-mase] [![Gitter][b-gitter]][x-gitter]
 
 Mongo-like memory db for when things are simple
 
 [install](#install) -
-[documentation](./docs) -
+[documentation][gh-pages] -
 [license](#license)
 
 ## documentation
 
-You can find the documentation [here](./docs).
+The documention is a pleasant [gitbook][gh-pages]
 
 ## usage
 
@@ -110,6 +108,7 @@ THE SOFTWARE.
 [x-npm]: https://www.npmjs.org
 [p-mase]: https://npmjs.com/mase
 
+[gh-pages]: https://stringparser.github.io/mase
 [x-gitter]: https://gitter.im/stringparser/mase
 [x-travis]: https://travis-ci.org/stringparser/mase/builds
 [x-license]: http://opensource.org/licenses/MIT
