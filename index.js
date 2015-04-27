@@ -42,7 +42,7 @@ function Mase(_name, data){
     return new Mase(_name, data);
   }
 
-  var name = util.type(_name).string || new util.bson.ObjectID();
+  var name = util.type(_name).string || util.randomID();
   Object.defineProperty(this, 'name', {value: name});
 
   data = data || _name;
@@ -72,9 +72,7 @@ _returns_
 **/
 Mase.prototype.insert = function(_doc){
   var doc = util.type(_doc).plainObject || {value: _doc};
-  if(!doc._id && doc._id !== 0){
-    doc._id = new util.bson.ObjectID();
-  }
+  if(!doc._id && doc._id !== 0){ doc._id = util.randomID(); }
   mase[this.name].push(util.clone(doc, true));
 
   return doc;
