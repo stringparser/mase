@@ -7,7 +7,7 @@ exports = module.exports = Mase;
 var mase = {};
 
 /**
-## README
+### README
 
 The module exports a constructor
 
@@ -15,7 +15,7 @@ The module exports a constructor
 var Mase = require('mase');
 ```
 
-### Mase
+# Mase
 
 ```js
 function Mase(string name, array data)
@@ -53,7 +53,7 @@ function Mase(_name, data){
 }
 
 /**
-#### insert
+## insert
 
 ```js
 function insert(object document)
@@ -79,10 +79,10 @@ Mase.prototype.insert = function(_doc){
 };
 
 /**
-#### find
+## find
 
 ```js
-function find(object fields[, object options|function test])
+function find(object fields[, object options|function $test])
 ```
 Find documents. By default, documents are tested for key-value
 equality between `fields[key]` and `doc[key]` for each document
@@ -90,19 +90,19 @@ on the database. This can be changed using a `tester` function.
 
 _arguments_
  - `fields` type object, document fields for lookup
- - `test` type function that will test `fields` for each document
+ - `$test` type function that will test `fields` for each document
  - `options` type object, helper object on how to do the lookup
 
 _options_ properties
  - `acc` type boolean, accumulated value of all document key tests
+ - `$test` type function for testing `fields` against a document
  - `break` wether or not to break the search after match
  - `count` type boolean, whether to return a count or not
- - `tester` type function for testing `fields` against a document
  - `result` type array or number, result returned by this function
-  - `array` when `count` is falsy
-  - `number` when `count` is truthy
+  - `[]` when `count` is falsy
+  - `0` when `count` is truthy
 
-_tester function arguments_ `(fields, doc, key, options)`
+_$test arguments_ `$test(fields, doc, key, options)`
  - `fields` the object fields given as argument
  - `doc` object document found that has property `key`
  - `key` property that `doc` and `fields` have in common
@@ -162,30 +162,30 @@ Mase.prototype.find = function(fields, o){
 };
 
 /**
-#### update
+## update
 
 ```js
-function update(object fields, object update[, object options|function updater])
+function update(object fields, object update[, object options|function $update])
 ```
 Update documents in the memory db. First they are found with
  `find` and then updated. This can be use as an update,
-upsert and transform of documents dependeding on how is used.
+upsert and transform of documents depending on how is used.
 
 _arguments_
  - `fields` type object, document fields for lookup
  - `update` type object with the fields to update
- - `updater` type function to update fields with
+ - `$update` type function to update fields with
  - `options` type object, how to do the update
 
 _options_ properties are the same as `find` plus
  - `upsert` type booblean, wether to insert `update` when
  there was no document found with `fields`
- - `updater` type function to make the update
+ - `$update` type function to make the update
 
 
-_updater function arguments_ `(doc, update)`
- - `update` same object given as argument
+_$update arguments_ `$update(doc, update)`
  - `doc` document found which `fields` properties
+ - `update` same object given as argument
 
 _defaults_
 - `options.updater` to merge `doc` with `update`
@@ -198,8 +198,9 @@ Mase.prototype.update = function(fields, update, o){
     !util.type(fields).plainObject &&
     !util.type(update).match(/function|plainObject/)
   ){
-    throw new TypeError('update(fields, update[, options]) '
-      + '`fields` and `update` should be plainObjects'
+    throw new TypeError('update(fields, update[, options])\n'
+      + ' `fields` should be plainObject\n'
+      + ' `update` should be function or plainObject'
     );
   }
 
@@ -225,7 +226,7 @@ Mase.prototype.update = function(fields, update, o){
 };
 
 /**
-#### remove
+## remove
 
 ```js
 function remove(any id)
