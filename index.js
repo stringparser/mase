@@ -203,9 +203,7 @@ Mase.prototype.update = function(fields, update, o){
     );
   }
 
-  if(update.$update){
-    o = update;
-  } else {
+  if(update.$update){ o = update; } else {
     o = util.type(o).plainObject || {$update: o || update};
   }
 
