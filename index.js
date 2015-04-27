@@ -7,7 +7,7 @@ exports = module.exports = Mase;
 var mase = {};
 
 /**
-## module.exports
+## README
 
 The module exports a constructor
 
