@@ -1,4 +1,4 @@
-#### remove
+## remove
 
 ```js
 function remove(any id)

@@ -6,7 +6,7 @@ The module exports a constructor
 var Mase = require('mase');
 ```
 
-### Mase
+# Mase
 
 ```js
 function Mase(string name, array data)

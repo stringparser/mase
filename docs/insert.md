@@ -1,4 +1,4 @@
-#### insert
+## insert
 
 ```js
 function insert(object document)

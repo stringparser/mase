@@ -23,6 +23,6 @@ docs.forEach(function(block, index){
   }
 
   // write each block on its file
-  fs.createWriteStream('${title}.md')
+  fs.createWriteStream(`${title}.md`)
     .write(lines.join('\n'));
 });
