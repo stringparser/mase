@@ -72,7 +72,9 @@ _returns_
 **/
 Mase.prototype.insert = function(_doc){
   var doc = util.type(_doc).plainObject || {value: _doc};
-  doc.id = util.type(doc.id).string || util.randomID();
+  if(util.type(doc._id).match(/null|undefined|NaN/)){
+    doc._id = util.randomID();
+  }
   mase[this.name].push(util.clone(doc, true));
 
   return doc;
@@ -82,23 +84,27 @@ Mase.prototype.insert = function(_doc){
 #### find
 
 ```js
-function find(object fields[, object options|function tester])
+function find(object fields[, object options|function test])
 ```
-Find documents in the memory db. Only documents that
-have at least one of the properties of `fields` will be tested.
+Find documents. By default, documents are tested for key-value
+equality between `fields[key]` and `doc[key]` for each document
+on the database. This can be changed using a `tester` function.
 
 _arguments_
  - `fields` type object, document fields for lookup
- - `tester` type function to test a field against a document
- - `options` type object, how to do the lookup
+ - `test` type function that will test `fields` for each document
+ - `options` type object, helper object on how to do the lookup
 
 _options_ properties
- - `acc`
- - `test` type function for testing `fields` against a document
+ - `acc` type boolean, accumulated value of all document key tests
  - `break` wether or not to break the search after match
  - `count` type boolean, whether to return a count or not
+ - `tester` type function for testing `fields` against a document
+ - `result` type array or number, result returned by this function
+  - `array` when `count` is falsy
+  - `number` when `count` is truthy
 
-_test function arguments_ `(fields, doc, key, options)`
+_tester function arguments_ `(fields, doc, key, options)`
  - `fields` the object fields given as argument
  - `doc` object document found that has property `key`
  - `key` property that `doc` and `fields` have in common
@@ -113,27 +119,29 @@ _returns_
 
 **/
 Mase.prototype.find = function(fields, o){
-  var store = mase[this.name];
-  if(!fields || !store.length){
-    return util.clone(store, true);
-  } else if(!util.type(fields).plainObject){
-    throw new TypeError('find(fields[, testFn, options]) '
+  if(fields && !util.type(fields).plainObject){
+    throw new TypeError('find(fields[, options]) '
       + '`fields` should be plainObject'
     );
   }
-  o = util.type(o).plainObject || {test: o};
+  o = util.type(o).plainObject || {$test: o};
+  var spec = Object.keys(fields || {});
+  var store = mase[this.name], len = store.length;
 
-  if(typeof o.test !== 'function'){
-    o.test = util.test.$equal;
+  if(!store.length || !spec.length){
+    return o.count ? len : util.clone(store, true);
   }
 
-  if(typeof o.onMatch !== 'function'){
-    o.onMatch = (o.count && util.match.$count)
-      || util.match.$equal;
+  if(typeof o.$test !== 'function'){
+    o.$test = util.test.$equal;
   }
 
-  var spec = Object.keys(fields);
-  var index = -1, len = store.length-1;
+  if(typeof o.$match !== 'function'){
+    o.$match = (o.count && util.match.$count) || util.match.$equal;
+  }
+
+  --len; // better this than index < len-1 for whilst()
+  var index = -1;
   o.result = o.count ? 0 : [];
 
   (function whilst(){
@@ -141,11 +149,11 @@ Mase.prototype.find = function(fields, o){
     var doc = store[++index];
     var match = spec.filter(function(key){
       if(doc[key] === void 0){ return false; }
-      return (o.acc = o.test(fields, doc, key, o));
-    }).length || spec.length === 0;
+      return (o.acc = o.$test(fields, doc, key, o));
+    }).length;
 
     if(match){
-      o.onMatch(doc, o);
+      o.$match(doc, o);
       if(o.break){ return ; }
     }
     if(index < len){ whilst(); }
@@ -188,20 +196,28 @@ _returns this_
 
 **/
 Mase.prototype.update = function(fields, update, o){
-  if(!util.type(fields).plainObject && !util.type(update).plainObject){
+  if(
+    !util.type(fields).plainObject &&
+    !util.type(update).match(/function|plainObject/)
+  ){
     throw new TypeError('update(fields, update[, options]) '
       + '`fields` and `update` should be plainObjects'
     );
   }
 
-  o = util.type(o).plainObject || {updater: o};
-  if(typeof o.update !== 'function'){
-    o.updater = util.merge;
+  if(update.$update){
+    o = update;
+  } else {
+    o = util.type(o).plainObject || {$update: o || update};
+  }
+
+  if(typeof o.$update !== 'function'){
+    o.$update = util.merge;
   }
 
   o.ref = true; o.count = false;
   var found = this.find(fields, o).map(function(doc){
-    o.updater(doc, update);
+    o.$update(doc, update);
     return doc;
   });
 
@@ -216,34 +232,31 @@ Mase.prototype.update = function(fields, update, o){
 #### remove
 
 ```js
-function remove(string id)
+function remove(any id)
 ```
 Remove only one document at a time.
 
 _arguments_
- - `id` type string, id of the document to delete
+ - `id` type any, id of the document to delete
 
 _returns_
  - `true` if there was a document removed
  - `false` if there was no document removed
 
 **/
-Mase.prototype.remove = function(id){
-  if(typeof id !== 'string'){
-    throw new TypeError(
-      'remove(string id) only possible to remove by id'
-    );
-  }
+Mase.prototype.remove = function(_id){
+  if(!_id && _id !== 0){ return false; }
 
-  var index = -1, length = store.length;
   var store = mase[this.name];
+  var index = 0, length = store.length;
 
-  while(++index < length){
-    if(id === store[index].id){
+  (function whilst(){
+    if(util.isEqual(_id, store[index]._id)){
       store.splice(index, 1);
       index += length;
     }
-  }
+    if(++index < length){ whilst(); }
+  })();
 
   return index > length;
 };
