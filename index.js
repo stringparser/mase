@@ -72,7 +72,7 @@ _returns_
 **/
 Mase.prototype.insert = function(_doc){
   var doc = util.type(_doc).plainObject || {value: _doc};
-  if(util.type(doc._id).match(/null|undefined|NaN/)){
+  if(!doc._id && doc._id !== 0){
     doc._id = util.randomID();
   }
   mase[this.name].push(util.clone(doc, true));
