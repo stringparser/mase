@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="2" data-basepath="." data-revision="Mon Apr 27 2015 22:32:11 GMT+0200 (CEST)">
+    <div class="book" data-level="2" data-basepath="." data-revision="Mon Apr 27 2015 22:32:55 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -229,8 +229,8 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h4 id="find">find</h4>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">find</span><span class="hljs-params">(object fields[, object options|function test])</span>
+                        <h2 id="find">find</h2>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">find</span><span class="hljs-params">(object fields[, object options|function $test])</span>
 </span></code></pre>
 <p>Find documents. By default, documents are tested for key-value
 equality between <code>fields[key]</code> and <code>doc[key]</code> for each document
@@ -238,22 +238,22 @@ on the database. This can be changed using a <code>tester</code> function.</p>
 <p><em>arguments</em></p>
 <ul>
 <li><code>fields</code> type object, document fields for lookup</li>
-<li><code>test</code> type function that will test <code>fields</code> for each document</li>
+<li><code>$test</code> type function that will test <code>fields</code> for each document</li>
 <li><code>options</code> type object, helper object on how to do the lookup</li>
 </ul>
 <p><em>options</em> properties</p>
 <ul>
 <li><code>acc</code> type boolean, accumulated value of all document key tests</li>
+<li><code>$test</code> type function for testing <code>fields</code> against a document</li>
 <li><code>break</code> wether or not to break the search after match</li>
 <li><code>count</code> type boolean, whether to return a count or not</li>
-<li><code>tester</code> type function for testing <code>fields</code> against a document</li>
 <li><code>result</code> type array or number, result returned by this function<ul>
-<li><code>array</code> when <code>count</code> is falsy</li>
-<li><code>number</code> when <code>count</code> is truthy</li>
+<li><code>[]</code> when <code>count</code> is falsy</li>
+<li><code>0</code> when <code>count</code> is truthy</li>
 </ul>
 </li>
 </ul>
-<p><em>tester function arguments</em> <code>(fields, doc, key, options)</code></p>
+<p><em>$test arguments</em> <code>$test(fields, doc, key, options)</code></p>
 <ul>
 <li><code>fields</code> the object fields given as argument</li>
 <li><code>doc</code> object document found that has property <code>key</code></li>
