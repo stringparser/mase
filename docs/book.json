@@ -1,0 +1,6 @@
+{
+    "gitbook": ">=2.0.0",
+    "title": "mase",
+    "description": "mongo-like in memory db for when things are simple",
+    "language": "en"
+}
