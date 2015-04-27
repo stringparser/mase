@@ -16,6 +16,16 @@ You can find the documentation [here](./docs).
 ## usage
 
 ```js
+
+var Mase = require('mase');
+
+var collection = [
+  {name: 'one'},
+  {name: 'two'}
+];
+
+var mase = new Mase('name', collection);
+
 mase.find({name: 'one'});
 // =>
 [ { name: 'one', _id: 'wzy7rd33q8478pvi' } ]
@@ -53,7 +63,8 @@ mase.find();
 mase.remove(2);
 // => false (we had no element with 2 for _id)
 
-fs.createWriteStream('coollection.json')
+var fs = require('fs');
+fs.createWriteStream('collection.json')
   .write(JSON.stringify(mase.find()));
 ```
 
