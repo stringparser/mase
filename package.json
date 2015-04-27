@@ -15,6 +15,7 @@
     "db"
   ],
   "dependencies": {
+    "bson": "^0.3.1",
     "lodash.clone": "^3.0.1",
     "lodash.isequal": "^3.0.2",
     "lodash.merge": "^3.2.0",
