@@ -15,8 +15,9 @@
     "db"
   ],
   "dependencies": {
-    "lodash.clone": "^3.0.1",
     "lodash.isequal": "^3.0.2",
+    "random-string": "^0.1.2",
+    "lodash.clone": "^3.0.1",
     "lodash.merge": "^3.2.0",
     "utils-type": "^0.12.1"
   },
