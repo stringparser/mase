@@ -241,10 +241,13 @@ _returns_
 
 **/
 Mase.prototype.remove = function(_id){
-  if(!_id && _id !== 0){ return false; }
-
   var store = mase[this.name];
   var index = 0, length = store.length;
+
+  if(!_id && _id !== 0){
+    mase[this.name] = [];
+    return Boolean(length);
+  }
 
   (function whilst(){
     if(util.isEqual(_id, store[index]._id)){
