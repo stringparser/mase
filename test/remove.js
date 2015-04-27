@@ -39,5 +39,21 @@ module.exports = function(Mase, util){
     mase.remove(0).should.be.eql(false);
   });
 
-  
+  it('remove(null|undefined|NaN|\'\') removes the collection', function(){
+    var mase = new Mase();
+
+    // 0 could be used as id, but not these
+    ;[null, undefined, NaN, ''].forEach(function(falsy){
+      testData.forEach(mase.insert, mase);
+      mase.find().should.be.eql(testData);
+      mase.remove(falsy).should.be.eql(true);
+      mase.find().should.be.eql([]);
+    });
+
+    testData.forEach(mase.insert, mase);
+    mase.find().should.be.eql(testData);
+    mase.remove(0).should.be.eql(false);
+    mase.insert({_id: 0});
+    mase.remove(0).should.be.eql(true);
+  });
 };
