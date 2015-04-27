@@ -1,4 +1,10 @@
-## mase documentation
+#### mase documentation  
+
+methods:
+ - [insert](#insert)
+ - [find](#find)
+ - [update](#update)
+ - [remove](#remove)
 
 ## module.exports
 
@@ -45,27 +51,30 @@ _defaults_
 _returns_
  - a clone of the inserted `document`
 
-
 #### find
 
 ```js
-function find(object fields[, object options|function tester])
+function find(object fields[, object options|function test])
 ```
-Find documents in the memory db. Only documents that
-have at least one of the properties of `fields` will be tested.
+Find documents. By default, documents are tested for key-value
+equality between `fields[key]` and `doc[key]` for each document
+on the database. This can be changed using a `tester` function.
 
 _arguments_
  - `fields` type object, document fields for lookup
- - `tester` type function to test a field against a document
- - `options` type object, how to do the lookup
+ - `test` type function that will test `fields` for each document
+ - `options` type object, helper object on how to do the lookup
 
 _options_ properties
- - `acc`
- - `test` type function for testing `fields` against a document
+ - `acc` type boolean, accumulated value of all document key tests
  - `break` wether or not to break the search after match
  - `count` type boolean, whether to return a count or not
+ - `tester` type function for testing `fields` against a document
+ - `result` type array or number, result returned by this function
+  - `array` when `count` is falsy
+  - `number` when `count` is truthy
 
-_test function arguments_ `(fields, doc, key, options)`
+_tester function arguments_ `(fields, doc, key, options)`
  - `fields` the object fields given as argument
  - `doc` object document found that has property `key`
  - `key` property that `doc` and `fields` have in common
@@ -77,7 +86,6 @@ _defaults_
 _returns_
  - if `count` is truthy, an integer count of all elements found
  - if `count` is falsy, an array clone of all the elements found
-
 
 #### update
 
@@ -113,12 +121,12 @@ _returns this_
 #### remove
 
 ```js
-function remove(string id)
+function remove(any id)
 ```
 Remove only one document at a time.
 
 _arguments_
- - `id` type string, id of the document to delete
+ - `id` type any, id of the document to delete
 
 _returns_
  - `true` if there was a document removed

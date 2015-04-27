@@ -1,15 +1,61 @@
 (WIP)
 
-## mase [![build][b-build]][x-travis][![NPM version][b-version]][p-mase] [![Gitter][b-gitter]][x-gitter]
+## mase
+[![build][b-build]][x-travis][![NPM version][b-version]][p-mase] [![Gitter][b-gitter]][x-gitter]
+
+Mongo-like memory db for when things are simple
 
 [install](#install) -
-[examples](#examples) -
-[why](#why) -
+[documentation](./docs) -
 [license](#license)
 
-An in memory db for when things are simple
+## documentation
 
+You can find the documentation [here](./docs).
 
+## usage
+
+```js
+mase.find({name: 'one'});
+// =>
+[ { name: 'one', _id: 'wzy7rd33q8478pvi' } ]
+
+mase.find({name: 'o'}, function $test(fields, doc, key){
+  return RegExp(fields[key]).test(doc[key]);
+});
+// =>
+[ { name: 'one', _id: 'wzy7rd33q8478pvi' },
+  { name: 'two', _id: 'ruffil4brshv9529' } ]
+
+mase.insert(1);
+// =>
+{ value: 1, _id: 'vp61d8s6iyynwmi' }
+
+mase.insert({_id: 1, num: 1});
+// =>
+{_id: 1, num: 1}
+
+mase.update({name: 'one'}, {key: 'val'}).find();
+// =>
+[ { name: 'one', _id: 'wzy7rd33q8478pvi', key: 'val' },
+  { name: 'two', _id: 'ruffil4brshv9529' },
+  { value: 1, _id: 'vp61d8s6iyynwmi' },
+  { _id: 1, num: 1 } ]
+
+mase.remove(1);
+// => true
+mase.find();
+// =>
+[ { name: 'one', _id: 'wzy7rd33q8478pvi', key: 'val' },
+  { name: 'two', _id: 'ruffil4brshv9529' },
+  { value: 1, _id: 'vp61d8s6iyynwmi' } ]
+
+mase.remove(2);
+// => false (we had no element with 2 for _id)
+
+fs.createWriteStream('coollection.json')
+  .write(JSON.stringify(mase.find()));
+```
 
 ## install
 
@@ -21,7 +67,27 @@ npm install mase
 
 ## license
 
-[![License][b-license]][x-license]
+This software is released under the MIT license
+
+Copyright (c) 2014-2015 Javier Carrillo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 <!-- links
   b-: is for badges
