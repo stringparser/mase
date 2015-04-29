@@ -58,6 +58,18 @@ function Mase(name, data){
       this.update({_id: item._id}, item, {$upsert: true});
     }, this);
   }
+
+  var onChange;
+  Object.defineProperty(this, 'changed', {
+    get: function(){ return onChange; },
+    set: function(handle){
+      if(typeof handle !== 'function'){
+        throw new TypeError('`changed` should be a function');
+      }
+      onChange = handle;
+      this.journal = true;
+    }
+  });
 }
 
 /**
@@ -85,9 +97,10 @@ _returns_ a clone of the inserted `document`
 
 **/
 Mase.prototype.insert = function(_doc){
-  var doc = util.type(_doc).plainObject || {value: _doc};
+  var doc = util.clone(util.type(_doc).plainObject || {value: _doc}, true);
   if(doc._id === void 0){ doc._id = util.randomID(); }
-  mase[this.name].push(util.clone(doc, true));
+  if(this.journal){ this.changed('insert', doc, null); }
+  mase[this.name].push(doc);
   return doc;
 };
 
@@ -200,7 +213,10 @@ _options_ properties
  - `$count` is always set to `false`
  - `$break` is always set to `true`
 
-_returns_ the object document found
+_returns_
+ - the object document if found
+ - `null` otherwise
+
 **/
 
 Mase.prototype.findOne = function(fields, o){
@@ -268,9 +284,10 @@ Mase.prototype.update = function(fields, update, o){
 
   o.$ref = true; o.$count = false;
   var found = this.find(fields, o).map(function(doc){
+    if(this.journal){ this.changed('update', update, doc); }
     o.$update(doc, update);
     return doc;
-  });
+  }, this);
 
   if(!found.length && o.$upsert){
     this.insert(util.merge(fields, update));
@@ -300,17 +317,42 @@ Mase.prototype.remove = function(_id){
   var index = 0, length = store.length;
 
   if(!_id && _id !== 0){
+    if(this.journal){
+      this.changed('remove', null, util.clone(mase[this.name], true));
+    }
     mase[this.name] = [];
     return Boolean(length);
   }
 
+  var self = this;
   (function whilst(){
     if(util.isEqual(_id, store[index]._id)){
+      if(self.journal){ self.changed('remove', null, store[index]); }
       store.splice(index, 1);
-      index += length;
+      index += length + 1;
     }
     if(++index < length){ whilst(); }
   })();
 
   return index > length;
 };
+
+
+/**
+## changed
+
+Called whenever there was a change on the db _only_ if the instance
+has a property `journal` otherwise there this method won't be called.
+
+### spec
+
+```js
+function changed(string method, object change, object doc)
+```
+
+_arguments_
+ - `method` type string, method that maked the change
+ - `change` type object, change performed on document
+ - `doc` type object, document to be changed
+
+**/
