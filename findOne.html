@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>update | mase</title>
+        <title>findOne | mase</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.1">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="./remove.html" />
+    <link rel="next" href="./update.html" />
     
     
-    <link rel="prev" href="./findOne.html" />
+    <link rel="prev" href="./find.html" />
     
 
         
@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4" data-basepath="." data-revision="Wed Apr 29 2015 20:22:38 GMT+0200 (CEST)">
+    <div class="book" data-level="3" data-basepath="." data-revision="Wed Apr 29 2015 20:22:38 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -96,7 +96,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3" data-path="findOne.html">
+        <li class="chapter active" data-level="3" data-path="findOne.html">
             
                 
                     <a href="./findOne.html">
@@ -111,7 +111,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="4" data-path="update.html">
+        <li class="chapter " data-level="4" data-path="update.html">
             
                 
                     <a href="./update.html">
@@ -244,39 +244,25 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="update">update</h2>
-<p>Update/Upsert documents in the memory db. They are found first using
- <code>find</code> and then updated. Documents updates can be customized
- by using an <code>$update</code> function.</p>
+                        <h2 id="findone">findOne</h2>
+<p>This method is just sugar on top of <code>find</code> enforcing
+it to always return an object or null if nothing was found.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">var</span> foundOne = find(fields, {
+  $test: [<span class="hljs-built_in">Function</span>] <span class="hljs-comment">// if given</span>
+  $<span class="hljs-keyword">break</span>: <span class="hljs-literal">true</span>,
+  $count: <span class="hljs-literal">false</span>
+})[<span class="hljs-number">0</span>];
+</code></pre>
 <h3 id="spec">spec</h3>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span><span class="hljs-params">(
-  object fields,
-  [object update|function $update],
-  [object options|function $update]
-)</span>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">findOne</span><span class="hljs-params">(fields[, options|function $test])</span>
 </span></code></pre>
-<p><em>arguments</em></p>
+<p>Same as <a href="find.html#spec"><code>find</code>&apos;s spec</a>, differences below</p>
+<p><em>options</em> properties</p>
 <ul>
-<li><code>fields</code> type object, document(s) fields to lookup</li>
-<li><code>update</code> type object, which fields to update on document(s) found</li>
-<li><code>$update</code> type function, customizes how to update fields</li>
-<li><code>options</code> type object, modifies how to do the update</li>
+<li><code>$count</code> is always set to <code>false</code></li>
+<li><code>$break</code> is always set to <code>true</code></li>
 </ul>
-<p><em>options</em>. Same they are for <a href="find.html"><code>find</code></a> plus</p>
-<ul>
-<li><code>$upsert</code> type boolean, wether to <code>insert</code> if no documents found</li>
-<li><code>$update</code> type function, customizer for the update</li>
-</ul>
-<p><code>$update(doc, update)</code> <em>arguments</em></p>
-<ul>
-<li><code>doc</code> document found using <code>fields</code></li>
-<li><code>update</code> same object given as argument</li>
-</ul>
-<p><em>defaults</em></p>
-<ul>
-<li><code>options.$update</code> to merge properties of <code>doc</code> with <code>update</code></li>
-</ul>
-<p><em>returns</em> <code>this</code></p>
+<p><em>returns</em> the object document found</p>
 
                     
                     </section>
@@ -287,10 +273,10 @@
         </div>
 
         
-        <a href="./findOne.html" class="navigation navigation-prev " aria-label="Previous page: findOne"><i class="fa fa-angle-left"></i></a>
+        <a href="./find.html" class="navigation navigation-prev " aria-label="Previous page: find"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./remove.html" class="navigation navigation-next " aria-label="Next page: remove"><i class="fa fa-angle-right"></i></a>
+        <a href="./update.html" class="navigation navigation-next " aria-label="Next page: update"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
