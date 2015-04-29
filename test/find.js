@@ -27,24 +27,24 @@ module.exports = function(Mase, util){
     ]);
   });
 
-    it('find({key: \'val\'}, {break: true}) returs one', function(){
+    it('find({key: \'val\'}, {$break: true}) returs one', function(){
       var mase = new Mase(testData);
 
-      mase.find({key: 'val'}, {break: true}).should.be.eql(
+      mase.find({key: 'val'}, {$break: true}).should.be.eql(
         {_id: 1, name: 'one', key: 'val'}
       );
     });
 
-  it('find({}, {count: true}), gives a count', function(){
+  it('find({}, {$count: true}), gives a count', function(){
     var mase = new Mase(testData);
 
-    mase.find({}, {count: true}).should.be.eql(testData.length);
+    mase.find({}, {$count: true}).should.be.eql(testData.length);
   });
 
-  it('find({key: \'val\'}, {count: true}) counts only those', function(){
+  it('find({key: \'val\'}, {$count: true}) counts those', function(){
     var mase = new Mase(testData);
 
-    mase.find({key: 'val'}, {count: true}).should.be.eql(2);
+    mase.find({key: 'val'}, {$count: true}).should.be.eql(2);
   });
 
   it('find(object, [Function]) changes how to find', function(){
@@ -73,14 +73,14 @@ module.exports = function(Mase, util){
     ]);
   });
 
-  it('$count find(object, {test:[Function], count:true})', function(){
+  it('$count find(object, {test:[Function], $count:true})', function(){
     var mase = new Mase(testData);
 
     mase.find({name: 'o'}, {
+      $count: true,
       $test: function(fields, doc, key){
         return RegExp(fields[key]).test(doc[key]);
-      },
-      count: true
+      }
     }).should.be.eql(3);
   });
 

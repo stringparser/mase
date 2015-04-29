@@ -12,7 +12,7 @@ module.exports = function(Mase, util){
     {_id: 4, name: 'four'}
   ];
 
-  it('update(fields, update) updates all matching documents', function(){
+  it('update(fields, update) all matching documents', function(){
     var mase = new Mase(testData);
 
     mase.update({key: 'val'}, {key: 'value'}).find()
@@ -24,10 +24,10 @@ module.exports = function(Mase, util){
       ]);
   });
 
-  it('update(fields, update, {break: true}) only the first', function(){
+  it('update(fields, update, {$break: true}) only first', function(){
     var mase = new Mase(testData);
 
-    mase.update({key: 'val'}, {key: 'value'}, {break: true})
+    mase.update({key: 'val'}, {key: 'value'}, {$break: true})
       .find().should.be.eql([
         {_id: 1, name: 'one', key: 'value'},
         {_id: 2, name: 'two', key: 'val'},
@@ -65,11 +65,11 @@ module.exports = function(Mase, util){
       ]);
   });
 
-  it('update(fields, {break: true, $updater: [Fn]}) updates one', function(){
+  it('update(fields, {$break: true, $update: [Fn]}) updates one', function(){
     var mase = new Mase(testData);
 
     mase.update({key: 'val'}, {
-      break: true,
+      $break: true,
       $update: function(doc){
         doc._id = doc._id*10;
       }
