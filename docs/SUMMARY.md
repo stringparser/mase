@@ -3,3 +3,4 @@
 * [findOne](findOne.md)
 * [update](update.md)
 * [remove](remove.md)
+* [changed](changed.md)

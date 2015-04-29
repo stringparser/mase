@@ -22,4 +22,6 @@ _options_ properties
  - `$count` is always set to `false`
  - `$break` is always set to `true`
 
-_returns_ the object document found
+_returns_
+ - the object document if found
+ - `null` otherwise
