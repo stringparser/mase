@@ -1,29 +1,33 @@
 ## update
 
+Update/Upsert documents in the memory db. They are found first using
+ `find` and then updated. Documents updates can be customized
+ by using an `$update` function.
+
+### spec
 ```js
-function update(object fields, object update[, object options|function $update])
+function update(
+  object fields,
+  [object update|function $update],
+  [object options|function $update]
+)
 ```
-Update documents in the memory db. First they are found with
- `find` and then updated. This can be use as an update,
-upsert and transform of documents depending on how is used.
 
 _arguments_
- - `fields` type object, document fields for lookup
- - `update` type object with the fields to update
- - `$update` type function to update fields with
- - `options` type object, how to do the update
+ - `fields` type object, document(s) fields to lookup
+ - `update` type object, which fields to update on document(s) found
+ - `$update` type function, customizes how to update fields
+ - `options` type object, modifies how to do the update
 
-_options_ properties are the same as `find` plus
- - `upsert` type booblean, wether to insert `update` when
- there was no document found with `fields`
- - `$update` type function to make the update
+_options_. Same they are for [`find`](./find.md) plus
+ - `$upsert` type boolean, wether to `insert` if no documents found
+ - `$update` type function, customizer for the update
 
-
-_$update arguments_ `$update(doc, update)`
- - `doc` document found which `fields` properties
+`$update(doc, update)` _arguments_
+ - `doc` document found using `fields`
  - `update` same object given as argument
 
 _defaults_
-- `options.updater` to merge `doc` with `update`
+- `options.$update` to merge properties of `doc` with `update`
 
-_returns this_
+_returns_ `this`
