@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="0" data-basepath="." data-revision="Mon Apr 27 2015 22:32:55 GMT+0200 (CEST)">
+    <div class="book" data-level="0" data-basepath="." data-revision="Wed Apr 29 2015 17:38:51 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -227,31 +227,36 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="module-exports">module.exports</h2>
-<p>The module exports a constructor</p>
+                        <h2 id="mase">Mase</h2>
+<p>The module exports a constructor.</p>
 <pre><code class="lang-js"><span class="hljs-keyword">var</span> Mase = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;mase&apos;</span>);
+<span class="hljs-keyword">var</span> db = <span class="hljs-keyword">new</span> Mase(string name, array data)
 </code></pre>
-<h1 id="mase">Mase</h1>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Mase</span><span class="hljs-params">(string name, array data)</span>
+<p>Memory dbs with the same <code>name</code> share memory.
+It can take an array of <code>data</code> as a second or first argument.
+If so, <code>data</code> is upserted into the db by only using each
+document&apos;s <code>_id</code> as a selector.</p>
+<h3 id="spec">spec</h3>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Mase</span><span class="hljs-params">([string name, array data])</span>
 </span></code></pre>
-<p>Constructor of in memory dbs.</p>
 <p><em>arguments</em></p>
 <ul>
-<li><code>name</code> type string, name of the store</li>
+<li><code>name</code> type string, name for the collection</li>
 <li><code>data</code> type array to insert in memory db</li>
 </ul>
 <p><em>defaults</em></p>
 <ul>
-<li><code>name</code> to a random string</li>
-<li><code>data</code> to empty array</li>
+<li><code>name</code> to a random 24 length string using <code>[A-Za-z0-9]</code> characters</li>
+<li><code>data</code><ul>
+<li>to the previous collection <code>name</code> array if there was one</li>
+<li>to empty array if collection <code>name</code> it wasn&apos;t</li>
 </ul>
-<p><em>returns</em></p>
-<ul>
-<li>new Mase instance</li>
+</li>
 </ul>
+<p><em>returns</em> a new instance</p>
 <p><em>instance properties</em></p>
 <ul>
-<li><code>name</code> the name given or generated for this instance</li>
+<li><code>name</code> given or generated for this instance</li>
 </ul>
 
                     

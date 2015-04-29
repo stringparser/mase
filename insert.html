@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="1" data-basepath="." data-revision="Mon Apr 27 2015 22:32:55 GMT+0200 (CEST)">
+    <div class="book" data-level="1" data-basepath="." data-revision="Wed Apr 29 2015 17:38:51 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -230,21 +230,22 @@
                     <section class="normal" id="section-">
                     
                         <h2 id="insert">insert</h2>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">insert</span><span class="hljs-params">(object document)</span>
+<p>Insert a new document. When <code>document</code> is not a plain object,
+i.e. <code>&apos;one&apos;, 1, etc.</code>, it will be inserted using its value.</p>
+<pre><code class="lang-js">db.insert(<span class="hljs-number">1</span>); <span class="hljs-comment">// =&gt; {value: 1, _id: &apos;wZy7rd33Q8478pvi&apos;}</span>
+</code></pre>
+<h3 id="spec">spec</h3>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">insert</span><span class="hljs-params">(object|any document)</span>
 </span></code></pre>
-<p>Insert a new document in the memory db.</p>
 <p><em>arguments</em></p>
 <ul>
-<li><code>document</code> type object, element to insert</li>
+<li><code>document</code> type object or any, element to insert.</li>
 </ul>
 <p><em>defaults</em></p>
 <ul>
-<li><code>document.id</code> to random string</li>
+<li><code>document._id</code> to a 24 length random string</li>
 </ul>
-<p><em>returns</em></p>
-<ul>
-<li>a clone of the inserted <code>document</code></li>
-</ul>
+<p><em>returns</em> a clone of the inserted <code>document</code></p>
 
                     
                     </section>

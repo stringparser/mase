@@ -19,7 +19,7 @@ docs.forEach(function(block, index){
   if(index){
     summary.write(`* [${title}](${title}.md)\n`);
   } else {
-    lines[0] = '## module.exports';
+    lines[0] = '## Mase';
   }
 
   // write each block on its file
