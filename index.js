@@ -131,17 +131,17 @@ _returns_ `o.$result`
 [p-lodash.isEqual]: https://lodash.com/docs#isEqual
 **/
 Mase.prototype.find = function(fields, o){
-  if(fields && !util.type(fields).plainObject){
-    throw new TypeError('find(fields[, object options|function $test]) '
-      + '`fields` should be plainObject'
+  if(fields && !util.type(fields).match(/function|plainObject/)){
+    throw new TypeError('find([fields, object options|function $test]) '
+      + '`fields` should be function or plainObject'
     );
   }
-  o = util.type(o).plainObject || {$test: o};
 
   var spec = Object.keys(fields || {});
   var store = mase[this.name], len = store.length;
+  o = util.type(o).plainObject || {$test: o || fields};
 
-  if(!store.length || !spec.length){
+  if(!len || !spec.length){
     return o.$count ? len : util.clone(store, true);
   }
 
@@ -153,9 +153,9 @@ Mase.prototype.find = function(fields, o){
     o.$match = (o.$count && util.match.$count) || util.match.$equal;
   }
 
-  --len; // better this than index < len-1 for whilst()
   var index = -1;
-  o.$result = o.$count ? 0 : [];
+  --len; o.$result = o.$count ? 0 : [];
+  // ^ better than index < len-1 in `whilst`
 
   (function whilst(){
     o.$acc = true;
@@ -166,18 +166,50 @@ Mase.prototype.find = function(fields, o){
 
     if(match){
       o.$match(doc, o);
-      if(o.$break){
-        if(!o.$update && o.$result.length < 2){
-          o.$result = doc;
-        }
-        return ;
-      }
+      if(o.$break){ return ; }
     }
     if(index < len){ whilst(); }
   })();
 
   if(o.$ref){ return o.$result; }
   return util.clone(o.$result, true);
+};
+
+/**
+## findOne
+
+This method is just sugar on top of `find` enforcing
+it to always return an object or null if nothing was found.
+
+```js
+var foundOne = find(fields, {
+  $test: [Function] // if given
+  $break: true,
+  $count: false
+})[0];
+```
+
+### spec
+```js
+function findOne(fields[, options|function $test])
+```
+
+Same as [`find`'s spec](./find.md#spec), differences below
+
+_options_ properties
+ - `$count` is always set to `false`
+ - `$break` is always set to `true`
+
+_returns_ the object document found
+**/
+
+Mase.prototype.findOne = function(fields, o){
+  o = util.type(o).plainObject || {$test: o};
+
+  o.$break = true;
+  o.$count = false;
+
+  return this.find(fields, o)[0] || null;
 };
 
 /**
