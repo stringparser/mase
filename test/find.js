@@ -27,13 +27,14 @@ module.exports = function(Mase, util){
     ]);
   });
 
-    it('find({key: \'val\'}, {$break: true}) returs one', function(){
-      var mase = new Mase(testData);
+  it('find({key: \'val\'}, {$break: true}) returs one', function(){
+    var mase = new Mase(testData);
 
-      mase.find({key: 'val'}, {$break: true}).should.be.eql(
-        {_id: 1, name: 'one', key: 'val'}
-      );
-    });
+    var found = mase.find({key: 'val'}, {$break: true});
+
+    found.should.have.property('length', 1);
+    found.should.be.eql([{_id: 1, name: 'one', key: 'val'}]);
+  });
 
   it('find({}, {$count: true}), gives a count', function(){
     var mase = new Mase(testData);
