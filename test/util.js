@@ -6,7 +6,14 @@ var path = require('path');
 module.exports = {
   lib: require('../lib/util'),
   suite : function(){
-    var first = ['create.js'];
+    var first = [
+      'create.js',
+      'insert.js',
+      'find.js',
+      'findOne.js',
+      'update.js',
+      'remove.js'
+    ];
 
     return first.concat(
       fs.readdirSync(__dirname).filter(function(file){
