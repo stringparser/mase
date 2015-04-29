@@ -1,4 +1,5 @@
 * [insert](insert.md)
 * [find](find.md)
+* [findOne](findOne.md)
 * [update](update.md)
 * [remove](remove.md)
