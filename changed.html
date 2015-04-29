@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>findOne | mase</title>
+        <title>changed | mase</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.1">
@@ -20,10 +20,8 @@
         
     
     
-    <link rel="next" href="./update.html" />
     
-    
-    <link rel="prev" href="./find.html" />
+    <link rel="prev" href="./remove.html" />
     
 
         
@@ -36,7 +34,7 @@
     
 
         
-    <div class="book" data-level="3" data-basepath="." data-revision="Wed Apr 29 2015 22:04:07 GMT+0200 (CEST)">
+    <div class="book" data-level="6" data-basepath="." data-revision="Wed Apr 29 2015 22:04:07 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -96,7 +94,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3" data-path="findOne.html">
+        <li class="chapter " data-level="3" data-path="findOne.html">
             
                 
                     <a href="./findOne.html">
@@ -141,7 +139,7 @@
             
         </li>
     
-        <li class="chapter " data-level="6" data-path="changed.html">
+        <li class="chapter active" data-level="6" data-path="changed.html">
             
                 
                     <a href="./changed.html">
@@ -259,28 +257,17 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="findone">findOne</h2>
-<p>This method is just sugar on top of <code>find</code> enforcing
-it to always return an object or null if nothing was found.</p>
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> foundOne = find(fields, {
-  $test: [<span class="hljs-built_in">Function</span>] <span class="hljs-comment">// if given</span>
-  $<span class="hljs-keyword">break</span>: <span class="hljs-literal">true</span>,
-  $count: <span class="hljs-literal">false</span>
-})[<span class="hljs-number">0</span>];
-</code></pre>
+                        <h2 id="changed">changed</h2>
+<p>Called whenever there was a change on the db <em>only</em> if the instance
+has a property <code>journal</code> otherwise there this method won&apos;t be called.</p>
 <h3 id="spec">spec</h3>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">findOne</span><span class="hljs-params">(fields[, options|function $test])</span>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">changed</span><span class="hljs-params">(string method, object change, object doc)</span>
 </span></code></pre>
-<p>Same as <a href="find.html#spec"><code>find</code>&apos;s spec</a>, differences below</p>
-<p><em>options</em> properties</p>
+<p><em>arguments</em></p>
 <ul>
-<li><code>$count</code> is always set to <code>false</code></li>
-<li><code>$break</code> is always set to <code>true</code></li>
-</ul>
-<p><em>returns</em></p>
-<ul>
-<li>the object document if found</li>
-<li><code>null</code> otherwise</li>
+<li><code>method</code> type string, method that maked the change</li>
+<li><code>change</code> type object, change performed on document</li>
+<li><code>doc</code> type object, document to be changed</li>
 </ul>
 
                     
@@ -292,10 +279,8 @@ it to always return an object or null if nothing was found.</p>
         </div>
 
         
-        <a href="./find.html" class="navigation navigation-prev " aria-label="Previous page: find"><i class="fa fa-angle-left"></i></a>
+        <a href="./remove.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: remove"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="./update.html" class="navigation navigation-next " aria-label="Next page: update"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
