@@ -12,9 +12,9 @@ docs.forEach(function(block, index){
   var lines = block.split('\n');
   // strip block comment start and end
   lines.shift(); lines.pop();
+  if(lines[0] === void 0){ return ; }
   // extract title
   var title = lines[0].replace(/[ ]*[#]+/, '').trim();
-
   // write table of contents
   if(index){
     summary.write(`* [${title}](${title}.md)\n`);
