@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="6" data-basepath="." data-revision="Thu Apr 30 2015 14:09:42 GMT+0200 (CEST)">
+    <div class="book" data-level="6" data-basepath="." data-revision="Thu Apr 30 2015 14:36:35 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -263,7 +263,7 @@ Should be set manually since its only stored on the <code>prototype</code>
 and or your instance.</p>
 <pre><code class="lang-js"><span class="hljs-keyword">var</span> db = <span class="hljs-keyword">new</span> Mase(<span class="hljs-string">&apos;name&apos;</span>, [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]);
 
-db.changed = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method, oldDoc, newDoc)</span></span>{
+db.changed = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method, newDoc, oldDoc)</span></span>{
   <span class="hljs-keyword">switch</span>(method){
     <span class="hljs-keyword">case</span> <span class="hljs-string">&apos;insert&apos;</span>:
       <span class="hljs-comment">// call your websockets, etc.</span>
@@ -286,8 +286,8 @@ db.changed = <span class="hljs-function"><span class="hljs-keyword">function</sp
 <p><em>arguments</em></p>
 <ul>
 <li><code>method</code> type string, method that maked the change</li>
-<li><code>change</code> type object, change performed on document</li>
-<li><code>doc</code> type object, document to be changed</li>
+<li><code>newDoc</code> type object, change performed on document</li>
+<li><code>oldDoc</code> type object, document to be changed</li>
 </ul>
 
                     
