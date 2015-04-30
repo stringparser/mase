@@ -26,10 +26,10 @@ module.exports = function(Mase, util){
   it('should give change and doc on insert', function(done){
     var db = new Mase(testData);
 
-    db.changed = function(method, change, doc){
+    db.changed = function(method, newDoc, oldDoc){
       method.should.be.eql('insert');
-      change.should.be.eql({_id: 5, name: 'five'});
-      (doc === null).should.be.eql(true);
+      newDoc.should.be.eql({_id: 5, name: 'five'});
+      (oldDoc === null).should.be.eql(true);
       done();
     };
 
@@ -50,10 +50,10 @@ module.exports = function(Mase, util){
   it('should give change and doc on remove', function(done){
     var db = new Mase(testData);
 
-    db.changed = function(method, change, doc){
+    db.changed = function(method, newDoc, oldDoc){
       method.should.be.eql('remove');
-      (change === null).should.be.eql(true);
-      doc.should.be.eql({_id: 4, name: 'four'});
+      (newDoc === null).should.be.eql(true);
+      oldDoc.should.be.eql({_id: 4, name: 'four'});
       done();
     };
 
@@ -74,10 +74,10 @@ module.exports = function(Mase, util){
   it('should give change and doc on update', function(done){
     var db = new Mase(testData);
 
-    db.changed = function(method, change, doc){
+    db.changed = function(method, newDoc, oldDoc){
       method.should.be.eql('update');
-      change.should.be.eql({num: 4});
-      doc.should.be.eql({_id: 4, name: 'four'});
+      newDoc.should.be.eql({num: 4});
+      oldDoc.should.be.eql({_id: 4, name: 'four'});
       done();
     };
 
