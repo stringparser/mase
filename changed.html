@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="6" data-basepath="." data-revision="Wed Apr 29 2015 22:04:07 GMT+0200 (CEST)">
+    <div class="book" data-level="6" data-basepath="." data-revision="Thu Apr 30 2015 14:09:42 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -258,8 +258,28 @@
                     <section class="normal" id="section-">
                     
                         <h2 id="changed">changed</h2>
-<p>Called whenever there was a change on the db <em>only</em> if the instance
-has a property <code>journal</code> otherwise there this method won&apos;t be called.</p>
+<p>Function called before any <code>insert</code>, <code>update</code> and <code>remove</code> .
+Should be set manually since its only stored on the <code>prototype</code>
+and or your instance.</p>
+<pre><code class="lang-js"><span class="hljs-keyword">var</span> db = <span class="hljs-keyword">new</span> Mase(<span class="hljs-string">&apos;name&apos;</span>, [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]);
+
+db.changed = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method, oldDoc, newDoc)</span></span>{
+  <span class="hljs-keyword">switch</span>(method){
+    <span class="hljs-keyword">case</span> <span class="hljs-string">&apos;insert&apos;</span>:
+      <span class="hljs-comment">// call your websockets, etc.</span>
+    <span class="hljs-keyword">break</span>;
+    <span class="hljs-comment">// etc</span>
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> ;
+    <span class="hljs-keyword">break</span>;
+  }
+}
+</code></pre>
+<p>The <code>oldDoc</code> and <code>newDoc</code> are passed just before the change is done
+ so beware to not mutate them. If you pass them to another function on the
+ same process I would highly-super-obnoxiously tell you to clone them.
+ If you are using this as is plotted above (for websocket action, etc.)
+ it would be fine.</p>
 <h3 id="spec">spec</h3>
 <pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">changed</span><span class="hljs-params">(string method, object change, object doc)</span>
 </span></code></pre>
@@ -287,10 +307,6 @@ has a property <code>journal</code> otherwise there this method won&apos;t be ca
 
         
 <script src="gitbook/app.js"></script>
-
-    
-    <script src="gitbook/plugins/gitbook-plugin-livereload/plugin.js"></script>
-    
 
 <script>
 require(["gitbook"], function(gitbook) {
