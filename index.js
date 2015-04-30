@@ -356,7 +356,7 @@ The `oldDoc` and `newDoc` are passed just before the change is done
 ### spec
 
 ```js
-function changed(string method, object newDoc, object oldDocs)
+function changed(string method, object newDoc, object oldDoc)
 ```
 
 _arguments_
