@@ -327,8 +327,9 @@ Mase.prototype.remove = function(_id){
 /**
 ## changed
 
-Function called whenever there was a change. Should be set manually since
-its only stored on the `prototype` and or your instance.
+Function called before any `insert`, `update` and `remove` .
+Should be set manually since its only stored on the `prototype`
+and or your instance.
 
 ```js
 var db = new Mase('name', [1,2,3]);
@@ -346,9 +347,9 @@ db.changed = function(method, oldDoc, newDoc){
 }
 ```
 
-The `oldDoc` and `newDoc` are passed just before the change is done.
-So beware to not mutate them. If you pass them to another function on the
- same process I would highly-super-obnoxiously tell you to clone them. 
+The `oldDoc` and `newDoc` are passed just before the change is done
+ so beware to not mutate them. If you pass them to another function on the
+ same process I would highly-super-obnoxiously tell you to clone them.
  If you are using this as is plotted above (for websocket action, etc.)
  it would be fine.
 
