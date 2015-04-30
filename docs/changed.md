@@ -7,7 +7,7 @@ and or your instance.
 ```js
 var db = new Mase('name', [1,2,3]);
 
-db.changed = function(method, oldDoc, newDoc){
+db.changed = function(method, newDoc, oldDoc){
   switch(method){
     case 'insert':
       // call your websockets, etc.
@@ -34,5 +34,5 @@ function changed(string method, object change, object doc)
 
 _arguments_
  - `method` type string, method that maked the change
- - `change` type object, change performed on document
- - `doc` type object, document to be changed
+ - `newDoc` type object, change performed on document
+ - `oldDoc` type object, document to be changed
