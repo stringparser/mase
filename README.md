@@ -1,7 +1,7 @@
 ## mase
 [![build][b-build]][x-travis][![NPM version][b-version]][p-mase] [![Gitter][b-gitter]][x-gitter]
 
-Mongo-like memory db for when things are simple
+mongo-like memory db for when things are simple
 
 [install](#install) -
 [documentation][gh-pages] -
@@ -14,7 +14,6 @@ The documentation is a pleasant [gitbook][gh-pages].
 ## usage
 
 ```js
-
 var Mase = require('mase');
 
 var collection = [
@@ -22,48 +21,49 @@ var collection = [
   {name: 'two'}
 ];
 
-var mase = new Mase('name', collection);
+var db = new Mase('name', collection);
 
-mase.find({name: 'one'});
+db.find({name: 'one'});
 // =>
 [ { name: 'one', _id: 'wzy7rd33q8478pvi' } ]
 
-mase.find({name: 'o'}, function $test(fields, doc, key){
+db.find({name: 'o'}, function $test(fields, doc, key){
   return RegExp(fields[key]).test(doc[key]);
 });
 // =>
 [ { name: 'one', _id: 'wzy7rd33q8478pvi' },
   { name: 'two', _id: 'ruffil4brshv9529' } ]
 
-mase.insert(1);
+db.insert(1);
 // =>
 { value: 1, _id: 'vp61d8s6iyynwmi' }
 
-mase.insert({_id: 1, num: 1});
+db.insert({_id: 1, num: 1});
 // =>
-{_id: 1, num: 1}
+{ _id: 1, num: 1 }
 
-mase.update({name: 'one'}, {key: 'val'}).find();
+db.update({name: 'one'}, {key: 'val'}).find();
 // =>
 [ { name: 'one', _id: 'wzy7rd33q8478pvi', key: 'val' },
   { name: 'two', _id: 'ruffil4brshv9529' },
   { value: 1, _id: 'vp61d8s6iyynwmi' },
   { _id: 1, num: 1 } ]
 
-mase.remove(1);
+db.remove(1);
 // => true
-mase.find();
+
+db.find();
 // =>
 [ { name: 'one', _id: 'wzy7rd33q8478pvi', key: 'val' },
   { name: 'two', _id: 'ruffil4brshv9529' },
   { value: 1, _id: 'vp61d8s6iyynwmi' } ]
 
-mase.remove(2);
+db.remove(2);
 // => false (we had no element with 2 for _id)
 
 var fs = require('fs');
 fs.createWriteStream('collection.json')
-  .write(JSON.stringify(mase.find()));
+  .write(JSON.stringify(db.find()));
 ```
 
 ## install
@@ -78,7 +78,7 @@ npm install mase
 
 This software is released under the MIT license
 
-Copyright (c) 2014-2015 Javier Carrillo
+Copyright (c) 2015 Javier Carrillo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -116,5 +116,5 @@ THE SOFTWARE.
 
 [b-build]: http://img.shields.io/travis/stringparser/mase/master.svg?style=flat-square
 [b-gitter]: https://badges.gitter.im/Join%20Chat.svg
-[b-version]: http://img.shields.io/npm/v/mase.svg?style=flat-square
-[b-license]: http://img.shields.io/npm/l/mase.svg?style=flat-square
+[b-version]: http://img.shields.io/npm/v/db.svg?style=flat-square
+[b-license]: http://img.shields.io/npm/l/db.svg?style=flat-square
