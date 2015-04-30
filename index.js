@@ -58,18 +58,6 @@ function Mase(name, data){
       this.update({_id: item._id}, item, {$upsert: true});
     }, this);
   }
-
-  var onChange;
-  Object.defineProperty(this, 'changed', {
-    get: function(){ return onChange; },
-    set: function(handle){
-      if(typeof handle !== 'function'){
-        throw new TypeError('`changed` should be a function');
-      }
-      onChange = handle;
-      this.journal = true;
-    }
-  });
 }
 
 /**
@@ -99,7 +87,7 @@ _returns_ a clone of the inserted `document`
 Mase.prototype.insert = function(_doc){
   var doc = util.clone(util.type(_doc).plainObject || {value: _doc}, true);
   if(doc._id === void 0){ doc._id = util.randomID(); }
-  if(this.journal){ this.changed('insert', doc, null); }
+  this.changed('insert', doc, null);
   mase[this.name].push(doc);
   return doc;
 };
@@ -284,7 +272,7 @@ Mase.prototype.update = function(fields, update, o){
 
   o.$ref = true; o.$count = false;
   var found = this.find(fields, o).map(function(doc){
-    if(this.journal){ this.changed('update', update, doc); }
+    this.changed('update', update, doc);
     o.$update(doc, update);
     return doc;
   }, this);
@@ -317,9 +305,7 @@ Mase.prototype.remove = function(_id){
   var index = 0, length = store.length;
 
   if(!_id && _id !== 0){
-    if(this.journal){
-      this.changed('remove', null, util.clone(mase[this.name], true));
-    }
+    this.changed('remove', null, mase[this.name]);
     mase[this.name] = [];
     return Boolean(length);
   }
@@ -327,7 +313,7 @@ Mase.prototype.remove = function(_id){
   var self = this;
   (function whilst(){
     if(util.isEqual(_id, store[index]._id)){
-      if(self.journal){ self.changed('remove', null, store[index]); }
+      self.changed('remove', null, store[index]);
       store.splice(index, 1);
       index += length + 1;
     }
@@ -341,8 +327,30 @@ Mase.prototype.remove = function(_id){
 /**
 ## changed
 
-Called whenever there was a change on the db _only_ if the instance
-has a property `journal` otherwise there this method won't be called.
+Function called whenever there was a change. Should be set manually since
+its only stored on the `prototype` and or your instance.
+
+```js
+var db = new Mase('name', [1,2,3]);
+
+db.changed = function(method, oldDoc, newDoc){
+  switch(method){
+    case 'insert':
+      // call your websockets, etc.
+    break;
+    // etc
+    default:
+      return ;
+    break;
+  }
+}
+```
+
+The `oldDoc` and `newDoc` are passed just before the change is done.
+So beware to not mutate them. If you pass them to another function on the
+ same process I would highly-super-obnoxiously tell you to clone them. 
+ If you are using this as is plotted above (for websocket action, etc.)
+ it would be fine.
 
 ### spec
 
@@ -356,3 +364,4 @@ _arguments_
  - `doc` type object, document to be changed
 
 **/
+Mase.prototype.changed = function onChange(){ /* empty */ };
