@@ -116,5 +116,5 @@ THE SOFTWARE.
 
 [b-build]: http://img.shields.io/travis/stringparser/mase/master.svg?style=flat-square
 [b-gitter]: https://badges.gitter.im/Join%20Chat.svg
-[b-version]: http://img.shields.io/npm/v/db.svg?style=flat-square
-[b-license]: http://img.shields.io/npm/l/db.svg?style=flat-square
+[b-version]: http://img.shields.io/npm/v/mase.svg?style=flat-square
+[b-license]: http://img.shields.io/npm/l/mase.svg?style=flat-square
