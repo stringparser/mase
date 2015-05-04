@@ -30,4 +30,4 @@ _defaults_
 _returns_ a new instance
 
 _instance properties_
-- `name` given or generated for this instance
+- `store` array of data of the instance
