@@ -4,9 +4,6 @@ var util = require('./lib/util');
 
 exports = module.exports = Mase;
 
-// namespace
-var mase = {};
-
 /**
 ### README
 
@@ -40,9 +37,12 @@ _defaults_
 _returns_ a new instance
 
 _instance properties_
-- `name` given or generated for this instance
+- `store` array of data of the instance
 
 **/
+
+// dbs namespace
+var mase = {};
 
 function Mase(name, data){
   if(!(this instanceof Mase)){
@@ -51,7 +51,10 @@ function Mase(name, data){
 
   data = data || name;
   this.name = util.type(name).string || util.randomID();
-  mase[this.name] = mase[this.name] || [];
+  if(mase[this.name]){ return mase[this.name]; }
+
+  this.store = [];
+  mase[this.name] = this;
 
   if(util.type(data).array){
     data.forEach(function(item){
@@ -88,7 +91,7 @@ Mase.prototype.insert = function(_doc){
   var doc = util.clone(util.type(_doc).plainObject || {value: _doc}, true);
   if(doc._id === void 0){ doc._id = util.randomID(); }
   this.changed('insert', doc, null);
-  mase[this.name].push(doc);
+  this.store.push(doc);
   return doc;
 };
 
@@ -139,11 +142,11 @@ Mase.prototype.find = function(fields, o){
   }
 
   var spec = Object.keys(fields || {});
-  var store = mase[this.name], len = store.length;
+  var length = this.store.length;
   o = util.type(o).plainObject || {$test: o || fields};
 
-  if(!len || !spec.length){
-    return o.$count ? len : util.clone(store, true);
+  if(!length || !spec.length){
+    return o.$count ? length : util.clone(this.store, true);
   }
 
   if(typeof o.$test !== 'function'){
@@ -154,8 +157,9 @@ Mase.prototype.find = function(fields, o){
     o.$match = (o.$count && util.match.$count) || util.match.$equal;
   }
 
-  var index = -1;
-  --len; o.$result = o.$count ? 0 : [];
+  --length;
+  o.$result = o.$count ? 0 : [];
+  var index = -1, store = this.store;
   // ^ better than index < len-1 in `whilst`
 
   (function whilst(){
@@ -169,7 +173,7 @@ Mase.prototype.find = function(fields, o){
       o.$match(doc, o);
       if(o.$break){ return ; }
     }
-    if(index < len){ whilst(); }
+    if(index < length){ whilst(); }
   })();
 
   if(o.$ref){ return o.$result; }
@@ -278,7 +282,7 @@ Mase.prototype.update = function(fields, update, o){
   }, this);
 
   if(!found.length && o.$upsert){
-    this.insert(util.merge(fields, update));
+    this.insert(o.$update(fields, update));
   }
 
   return this;
@@ -301,20 +305,19 @@ _returns_
 
 **/
 Mase.prototype.remove = function(_id){
-  var store = mase[this.name];
-  var index = 0, length = store.length;
+  var index = 0, length = this.store.length;
 
   if(!_id && _id !== 0){
-    this.changed('remove', null, mase[this.name]);
-    mase[this.name] = [];
+    this.changed('remove', null, this.store);
+    this.store = [];
     return Boolean(length);
   }
 
   var self = this;
   (function whilst(){
-    if(util.isEqual(_id, store[index]._id)){
-      self.changed('remove', null, store[index]);
-      store.splice(index, 1);
+    if(util.isEqual(_id, self.store[index]._id)){
+      self.changed('remove', null, self.store[index]);
+      self.store.splice(index, 1);
       index += length + 1;
     }
     if(++index < length){ whilst(); }
