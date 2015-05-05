@@ -33,6 +33,21 @@ module.exports = function(Mase, util){
     ]);
   });
 
+  it('find should count matches by default', function(){
+    var mase = new Mase(testData);
+
+    var result = mase.find(function(fields, doc, key, o){
+      if(o.$count < 2){ return true; }
+      o.$break = true; return false;
+    });
+
+    result.should.have.property('length', 2);
+    result.should.be.eql([
+      {_id: 1, name: 'one', key: 'val'},
+      {_id: 2, name: 'two', key: 'val'}
+    ]);
+  });
+
   it('find([Function]) does not skip testing', function(){
     var mase = new Mase(testData);
 
