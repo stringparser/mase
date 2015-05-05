@@ -17,7 +17,7 @@ _arguments_
 _options_ properties
  - `$acc` type boolean, return value of the `$test` function
  - `$test` type function that tests `fields` against each document
- - `$break` type boolean, wether to break stop the search
+ - `$break` type boolean, wether to **break the search after a match**
  - `$count` type boolean, wether to have `result` start as `0` or `[]`
  - `$result` type array or number, result returned. It will start as:
   - empty array when `$count` is falsy
