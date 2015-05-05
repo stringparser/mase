@@ -145,7 +145,7 @@ Mase.prototype.find = function(fields, o){
   var length = this.store.length;
   o = util.type(o).plainObject || {$test: o || fields};
 
-  if(!length || (!spec.length && o.$test !== 'function')){
+  if(!length || (!spec.length && typeof o.$test !== 'function')){
     return o.$count ? length : util.clone(this.store, true);
   }
 
@@ -158,8 +158,8 @@ Mase.prototype.find = function(fields, o){
   }
 
   --length;
-  spec = spec.length ? spec : '';
   o.$result = o.$count ? 0 : [];
+  if(!spec.length){ spec = ''; }
   var index = -1, store = this.store;
   // ^ better than index < len-1 in `whilst`
 
