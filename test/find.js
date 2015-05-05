@@ -18,6 +18,35 @@ module.exports = function(Mase, util){
     mase.find().should.be.eql(testData);
   });
 
+  it('find({}, [Function]) does not skip testing', function(){
+    var mase = new Mase(testData);
+
+    var result = mase.find({}, function(fields, doc, key, o){
+      if(o.$result.length < 2){ return true; }
+      o.$break = true; return false;
+    });
+
+    result.should.have.property('length', 2);
+    result.should.be.eql([
+      {_id: 1, name: 'one', key: 'val'},
+      {_id: 2, name: 'two', key: 'val'}
+    ]);
+  });
+
+  it('find([Function]) does not skip testing', function(){
+    var mase = new Mase(testData);
+
+    var result = mase.find(function(fields, doc, key, o){
+      if(o.$result.length < 1){ return true; }
+      o.$break = true; return false;
+    });
+
+    result.should.have.property('length', 1);
+    result.should.be.eql([
+      {_id: 1, name: 'one', key: 'val'}
+    ]);
+  });
+
   it('find({key: \'val\'}) gives only those matching', function(){
     var mase = new Mase(testData);
 
