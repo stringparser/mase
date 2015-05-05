@@ -104,7 +104,7 @@ This can be changed using a `$test` function.
 
 ### spec
 ```js
-function find(object fields[, object options|function $test])
+function find([object fields, object options|function $test])
 ```
 
 _arguments_
@@ -115,7 +115,7 @@ _arguments_
 _options_ properties
  - `$acc` type boolean, return value of the `$test` function
  - `$test` type function that tests `fields` against each document
- - `$break` type boolean, wether to break the search after match
+ - `$break` type boolean, wether to break stop the search
  - `$count` type boolean, wether to have `result` start as `0` or `[]`
  - `$result` type array or number, result returned. It will start as:
   - empty array when `$count` is falsy
@@ -170,10 +170,8 @@ Mase.prototype.find = function(fields, o){
       return (o.$acc = o.$test(fields, doc, key, o));
     }).length;
 
-    if(match){
-      o.$match(doc, o);
-      if(o.$break){ return ; }
-    }
+    if(match){ o.$match(doc, o); }
+    if(o.$break){ return ; }
     if(index < length){ whilst(); }
   })();
 
