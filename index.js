@@ -163,6 +163,7 @@ Mase.prototype.find = function(fields, o){
   var index = -1, store = this.store;
   // ^ better than index < len-1 in `whilst`
 
+  o.$count = 0;
   (function whilst(){
     o.$acc = true;
     var doc = store[++index];
@@ -171,6 +172,7 @@ Mase.prototype.find = function(fields, o){
     }).length;
 
     if(match){
+      ++o.$count;
       o.$match(doc, o);
       if(o.$break){ return ; }
     }
