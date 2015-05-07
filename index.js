@@ -135,35 +135,34 @@ _returns_ `o.$result`
 [p-lodash.isEqual]: https://lodash.com/docs#isEqual
 **/
 Mase.prototype.find = function(fields, o){
-  try { var spec = typeof fields === 'object' && Object.keys(fields); }
-  catch(err){
-    throw new TypeError('find([fields, object|function options]) '
-      + '1st argument should be function or plainObject'
-    );
+  o = (typeof o === 'object' && o) || {$test: o || fields};
+  fields = fields || {};
+  var spec = fields._id ? ['_id'] : Object.keys(fields);
+
+  if(!this.store.length || (!spec.length && !o.$test)){
+    return util.clone(this.store, true);
   }
 
-  o = (typeof o === 'object' && o) || {$test: o || fields};
-  if(typeof o.$test !== 'function'){ o.$test = util.$test; }
+  if(typeof o.$test !== 'function'){
+    o.$test = util.$test;
+  }
 
-  var index = -1;
-  var store = this.store;
-  var length = store.length;
+  o.$result = [];
+  var index = 0, store = this.store;
+  if(!spec.length){ spec = null; }
 
-  function search(){
-    var doc = store[++index];
-    if(o.$test(fields, doc, spec, o)){
+  (function search(){
+    var doc = store[index]; o.$acc = true;
+    var match = (spec || Object.keys(doc)).filter(function(key){
+      return (o.$acc = o.$test(fields, doc, key, o));
+    }).length;
+
+    if(match){
       o.$result.push(doc);
       if(o.$break){ return ; }
     }
-    if(index < length){ search(); }
-  }
-
-  if(!length || (!spec && typeof o.$test !== 'function')){
-    o.$result = this.store;
-  } else {
-    --length; // <- better than index < length-1 whilst search
-    o.$result = []; search();
-  }
+    if(++index < store.length){ search(); }
+  })();
 
   if(o.$ref){ return o.$result; }
   return util.clone(o.$result, true);
