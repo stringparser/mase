@@ -18,11 +18,11 @@ module.exports = function(Mase, util){
     mase.find().should.be.eql(testData);
   });
 
-  it('find({}, [Function]) does not skip testing', function(){
+  it('find({}, [Function]) does not skip $test', function(){
     var mase = new Mase(testData);
 
     var result = mase.find({}, function(fields, doc, key, o){
-      if(o.$result.length < 2){ return true; }
+      if(doc.key === 'val' && o.$result.length < 2){ return true; }
       o.$break = true; return false;
     });
 
@@ -33,26 +33,11 @@ module.exports = function(Mase, util){
     ]);
   });
 
-  it('find should count matches by default', function(){
+  it('find([Function]) does not skip $test', function(){
     var mase = new Mase(testData);
 
     var result = mase.find(function(fields, doc, key, o){
-      if(o.$count < 2){ return true; }
-      o.$break = true; return false;
-    });
-
-    result.should.have.property('length', 2);
-    result.should.be.eql([
-      {_id: 1, name: 'one', key: 'val'},
-      {_id: 2, name: 'two', key: 'val'}
-    ]);
-  });
-
-  it('find([Function]) does not skip testing', function(){
-    var mase = new Mase(testData);
-
-    var result = mase.find(function(fields, doc, key, o){
-      if(o.$result.length < 1){ return true; }
+      if(doc.key === 'val' && o.$result.length < 1){ return true; }
       o.$break = true; return false;
     });
 
@@ -80,18 +65,6 @@ module.exports = function(Mase, util){
     found.should.be.eql([{_id: 1, name: 'one', key: 'val'}]);
   });
 
-  it('find({}, {$count: true}), gives a count', function(){
-    var mase = new Mase(testData);
-
-    mase.find({}, {$count: true}).should.be.eql(testData.length);
-  });
-
-  it('find({key: \'val\'}, {$count: true}) counts those', function(){
-    var mase = new Mase(testData);
-
-    mase.find({key: 'val'}, {$count: true}).should.be.eql(2);
-  });
-
   it('find(object, [Function]) changes how to find', function(){
     var mase = new Mase(testData);
 
@@ -116,17 +89,6 @@ module.exports = function(Mase, util){
       {_id: 2, name: 'two', key: 'val'},
       {_id: 4, name: 'four'}
     ]);
-  });
-
-  it('$count find(object, {test:[Function], $count:true})', function(){
-    var mase = new Mase(testData);
-
-    mase.find({name: 'o'}, {
-      $count: true,
-      $test: function(fields, doc, key){
-        return RegExp(fields[key]).test(doc[key]);
-      }
-    }).should.be.eql(3);
   });
 
 };
