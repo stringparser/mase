@@ -135,49 +135,35 @@ _returns_ `o.$result`
 [p-lodash.isEqual]: https://lodash.com/docs#isEqual
 **/
 Mase.prototype.find = function(fields, o){
-  if(fields && !util.type(fields).match(/function|plainObject/)){
-    throw new TypeError('find([fields, object options|function $test]) '
-      + '`fields` should be function or plainObject'
+  try { var spec = typeof fields === 'object' && Object.keys(fields); }
+  catch(err){
+    throw new TypeError('find([fields, object|function options]) '
+      + '1st argument should be function or plainObject'
     );
   }
 
-  var spec = Object.keys(fields || {});
-  var length = this.store.length;
-  o = util.type(o).plainObject || {$test: o || fields};
+  o = (typeof o === 'object' && o) || {$test: o || fields};
+  if(typeof o.$test !== 'function'){ o.$test = util.$test; }
 
-  if(!spec.length){ spec = null; }
-  if(!length || (!spec && typeof o.$test !== 'function')){
-    return o.$count ? length : util.clone(this.store, true);
-  }
+  var index = -1;
+  var store = this.store;
+  var length = store.length;
 
-  if(typeof o.$test !== 'function'){
-    o.$test = util.test.$equal;
-  }
-
-  if(typeof o.$match !== 'function'){
-    o.$match = (o.$count && util.match.$count) || util.match.$equal;
-  }
-
-  --length;
-  o.$result = o.$count ? 0 : [];
-  var index = -1, store = this.store;
-  // ^ better than index < length-1 in `whilst`
-
-  o.$count = 0;
-  (function whilst(){
-    o.$acc = true;
+  function search(){
     var doc = store[++index];
-    var match = (spec || Object.keys(doc)).filter(function(key){
-      return (o.$acc = o.$test(fields, doc, key, o));
-    }).length;
-
-    if(match){
-      ++o.$count;
-      o.$match(doc, o);
+    if(o.$test(fields, doc, spec, o)){
+      o.$result.push(doc);
       if(o.$break){ return ; }
     }
-    if(index < length){ whilst(); }
-  })();
+    if(index < length){ search(); }
+  }
+
+  if(!length || (!spec && typeof o.$test !== 'function')){
+    o.$result = this.store;
+  } else {
+    --length; // <- better than index < length-1 whilst search
+    o.$result = []; search();
+  }
 
   if(o.$ref){ return o.$result; }
   return util.clone(o.$result, true);
