@@ -110,16 +110,13 @@ function find([object fields, object options|function $test])
 _arguments_
  - `fields` type object, document fields for lookup
  - `$test` type function that will test `fields` for each document
- - `options` type object, helper object on how to do the lookup
+ - `options` type object, how to do the lookup
 
 _options_ properties
  - `$acc` type boolean, return value of the `$test` function
- - `$test` type function that tests `fields` against each document
- - `$break` type boolean, wether to **break the search after a match**
- - `$count` type boolean, wether to have `result` start as `0` or `[]`
- - `$result` type array or number, result returned. It will start as:
-  - empty array when `$count` is falsy
-  - `0` when `$count` is truthy
+ - `$test` type function to tests `fields` against each document
+ - `$break` type boolean for wether to break the search after a match
+ - `$result` type array, result returned. Starts as empty
 
 `$test(fields, doc, key, options)` _arguments_
  - `fields` object fields given as argument
