@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="2" data-basepath="." data-revision="Tue May 05 2015 22:49:43 GMT+0200 (CEST)">
+    <div class="book" data-level="2" data-basepath="." data-revision="Wed Jun 03 2015 21:29:59 GMT+0200 (CEST)">
     
 
 <div class="book-summary">
@@ -270,19 +270,14 @@ This can be changed using a <code>$test</code> function.</p>
 <ul>
 <li><code>fields</code> type object, document fields for lookup</li>
 <li><code>$test</code> type function that will test <code>fields</code> for each document</li>
-<li><code>options</code> type object, helper object on how to do the lookup</li>
+<li><code>options</code> type object, how to do the lookup</li>
 </ul>
 <p><em>options</em> properties</p>
 <ul>
 <li><code>$acc</code> type boolean, return value of the <code>$test</code> function</li>
-<li><code>$test</code> type function that tests <code>fields</code> against each document</li>
-<li><code>$break</code> type boolean, wether to <strong>break the search after a match</strong></li>
-<li><code>$count</code> type boolean, wether to have <code>result</code> start as <code>0</code> or <code>[]</code></li>
-<li><code>$result</code> type array or number, result returned. It will start as:<ul>
-<li>empty array when <code>$count</code> is falsy</li>
-<li><code>0</code> when <code>$count</code> is truthy</li>
-</ul>
-</li>
+<li><code>$test</code> type function to tests <code>fields</code> against each document</li>
+<li><code>$break</code> type boolean for wether to break the search after a match</li>
+<li><code>$result</code> type array, result returned. Starts as empty</li>
 </ul>
 <p><code>$test(fields, doc, key, options)</code> <em>arguments</em></p>
 <ul>
