@@ -25,14 +25,13 @@
     "gh-pages": "^0.2.0",
     "gitbook-cli": "^0.3.3",
     "jshint": "*",
-    "jshint-stylish": "*",
     "mocha": "*",
     "should": "*"
   },
   "scripts": {
     "deploy-docs": "node docs && gitbook build docs && node docs/deploy",
     "generate-docs": "node docs/index.js",
-    "lint": "jshint lib index.js --reporter node_modules/jshint-stylish/stylish.js --exclude node_modules",
+    "lint": "jshint lib index.js",
     "test": "npm run-script lint && mocha test"
   },
   "license": "MIT"
