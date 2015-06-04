@@ -132,8 +132,8 @@ _returns_ `o.$result`
 [p-lodash.isEqual]: https://lodash.com/docs#isEqual
 **/
 Mase.prototype.find = function(fields, o){
-  o = (typeof o === 'object' && o) || {$test: o || fields};
-  fields = fields || {};
+  o = util.type(o).plainObject || {$test: o || fields};
+  fields = util.type(fields).plainObject || {};
   var spec = fields._id ? ['_id'] : Object.keys(fields);
 
   if(!this.store.length || (!spec.length && !o.$test)){
